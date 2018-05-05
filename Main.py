@@ -18,23 +18,26 @@ def count_user_commits(user):
 
 def count_repo_commits(commits_url, _acc=0):
     r = requests.get(commits_url)
-    commits = json.loads(r.content)
-
-    for com in commits['sha']:
-        x= com.sha
-
-    n = len(commits)
-    if n == 0:
+    if(r.status_code!=409):
+        commits = json.loads(r.content)
+        #try:
+           #for com in commits['sha']:
+            #x= com
+        #except Exception as e:
+            #print(commits)
+        n = len(commits)
+        if n == 0:
+            return _acc
+        link = r.headers.get('link')
+        if link is None:
+            return _acc + n
+        next_url = find_next(r.headers['link'])
+        if next_url is None:
+            return _acc + n
+        # try to be tail recursive, even when it doesn't matter in CPython
+        return count_repo_commits(next_url, _acc + n)
+    else :
         return _acc
-    link = r.headers.get('link')
-    if link is None:
-        return _acc + n
-    next_url = find_next(r.headers['link'])
-    if next_url is None:
-        return _acc + n
-    # try to be tail recursive, even when it doesn't matter in CPython
-    return count_repo_commits(next_url, _acc + n)
-
 
 # given a link header from github, find the link for the next url which they use for pagination
 def find_next(link):
@@ -47,12 +50,12 @@ def find_next(link):
 if __name__ == '__main__':
     import sys
     try:
-        user = 'zozkalkan'
+        user = 'haciyakup'
     except IndexError:
         print("Usage: %s <username>" % sys.argv[0])
         sys.exit(1)
     total = 0
     for repo in count_user_commits(user):
         print ("Repo `%(name)s` has %(num_commits)d commits,repository size %(size)d KB." % repo)
-        total += repo['num_commits']
+        total =total+ repo['num_commits']
     print ("Total commits: %d" % total)
