@@ -2,13 +2,10 @@ import plyj.parser as plyj
 import pyodbc
 import zipfile
 
-
-
 # global variable
 rtrnValArr=[]
 rtrnVal_=''
 sayac = 0
-
 
 def Insert_Method_Invocation(class_name, project_name, method_name, variable_name, called_method_name, method_code,path):
     qry = '''INSERT INTO METHOD_INVOCATION
@@ -173,7 +170,6 @@ def transactions(MethodDec,cName,file_path):
 
 parser = plyj.Parser()
 
-
 try:
     srczip = zipfile.ZipFile('Baz.zip', mode='r')
     #onlyfiles = [f for f in listdir('srczip') if isfile(join('srczip', f))]
@@ -183,7 +179,6 @@ try:
       if (len(file.filename.split('.'))>1):
         if(file.filename.split('.')[1] == 'java'):
             onlyfiles.append(file.filename)
-
 
 except Exception as e:
     print('hata', e)
