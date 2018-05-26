@@ -50,7 +50,7 @@ def find_next(link):
 if __name__ == '__main__':
     import sys
     try:
-        user = 'haciyakup'
+        user = 'Kubra94'
     except IndexError:
         print("Usage: %s <username>" % sys.argv[0])
         sys.exit(1)
