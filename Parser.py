@@ -1,24 +1,41 @@
 import plyj.parser as plyj
 import pyodbc
 import zipfile
+import lizard
 
+zipName= 'server-develop.zip'
 # global variable
 rtrnValArr=[]
 rtrnVal_=''
 sayac = 0
 def Insert_Method_Invocation(class_name, project_name, method_name, variable_name, called_method_name, method_code,path):
     qry = '''INSERT INTO METHOD_INVOCATION
-             (CLASS_NAME, PROJECT_NAME,METHOD_NAME,VARIABLE_NAME,CALLED_METHOD_NAME,METHOD_CODE,PATH)
-             VALUES(?, ?,?,?,?,?,?)'''
+             (CLASS_NAME, PROJECT_NAME,METHOD_NAME,VARIABLE_NAME,CALLED_METHOD_NAME,METHOD_CODE,PATH,CC,LOC)
+             VALUES(?, ?,?,?,?,?,?,?,?)'''
 
     #print(class_name ,"-",variable_name)
+    srczip = zipfile.ZipFile(zipName, mode='r')
+    info = srczip.getinfo(file)
+    srcfile = srczip.read(info)
+    str = srcfile.decode("utf-8")
+
+    i = lizard.analyze_file.analyze_source_code(file, str)
+    curCC=0
+    loc=0
+    if hasattr(i, 'function_list'):
+        for function in i.function_list:
+            if hasattr(function,'name'):
+                if (method_name==function.name.split('::')[len(function.name.split('::'))-1]):
+                    curCC=function.cyclomatic_complexity
+                    loc= function.length
+                    print('File:', file, 'Method name:', function.name, 'CC:', function.cyclomatic_complexity )
 
     if(class_name== variable_name):
         variable_name = 'ownMethod'
 
     param_values = [class_name, project_name, method_name,
                     variable_name,
-                    called_method_name, method_code,path]
+                    called_method_name, method_code,path,curCC,loc]
     cursor.execute(qry, param_values)
 
     cursor.commit()
@@ -383,7 +400,7 @@ def transactions(MethodDec,cName,file_path,sayac):
 parser = plyj.Parser()
 
 try:
-    srczip = zipfile.ZipFile('server-develop2.zip', mode='r')
+    srczip = zipfile.ZipFile(zipName, mode='r')
     #onlyfiles = [f for f in listdir('srczip') if isfile(join('srczip', f))]
     onlyfiles=[];
     for file in srczip.filelist:
@@ -412,6 +429,7 @@ for file in onlyfiles:
     str = srcfile.decode("utf-8")
     tree = parser.parse_string(str)
     ClassNames = tree.type_declarations
+
 
     for className in ClassNames:
         print(' ClassName: ', className.name)
