@@ -3,7 +3,7 @@ import pyodbc
 import zipfile
 import lizard
 
-zipName= 'server-develop.zip'
+zipName= 'tomcat70-trunk.zip'
 # global variable
 rtrnValArr=[]
 rtrnVal_=''
@@ -29,7 +29,7 @@ def Insert_Method_Invocation(class_name, project_name, method_name, variable_nam
                 if (method_name==function.name.split('::')[len(function.name.split('::'))-1]):
                     curCC=function.cyclomatic_complexity
                     loc= function.length
-                    print('File:', file, 'Method name:', function.name, 'CC:', function.cyclomatic_complexity )
+                   # print('File:', file, 'Method name:', function.name, 'CC:', function.cyclomatic_complexity )
 
     if(class_name== variable_name):
         variable_name = 'ownMethod'
@@ -170,7 +170,7 @@ def variableHandler(body,cName,file_path):
                 objectTypes=body.type.name.value
             else:
                 objectTypes = body.type
-            Insert_Variable_Invocation(cName, 'baz.java', parentMethodName,
+            Insert_Variable_Invocation(cName, 'tomcat.java', parentMethodName,
                                        params.variable.name,
                                        objectTypes,
                                        sayac, file_path)
@@ -178,7 +178,7 @@ def variableHandler(body,cName,file_path):
         if hasattr(params.initializer,'type'):
             if hasattr(params.initializer.type,'name'):
                 if hasattr(params.initializer.type.name,'value'):
-                    Insert_Variable_Invocation(cName, 'baz.java', parentMethodName,
+                    Insert_Variable_Invocation(cName, 'tomcat.java', parentMethodName,
                                        params.variable.name,
                                            params.initializer.type.name.value,
                                        sayac, file_path)
@@ -335,7 +335,7 @@ def tryBlockHandler(body,cName,file_path,pMethodName):
 
                 DBMethodName = mergeMethodNames(rtrnValArr, body.name)
 
-                Insert_Method_Invocation(cName, 'baz.java', MethodDec.name,
+                Insert_Method_Invocation(cName, 'tomcat.java', MethodDec.name,
                                          objectName,
                                          DBMethodName, sayac, file_path)
 
@@ -360,7 +360,7 @@ def transactions(MethodDec,cName,file_path,sayac):
                     else:
                         objectType = params.type
 
-                    Insert_Variable_Invocation(cName, 'baz.java', MethodDec.name, params.variable.name,
+                    Insert_Variable_Invocation(cName, 'tomcat.java', MethodDec.name, params.variable.name,
                                                objectType, sayac, file_path)
 
             # method invacation
