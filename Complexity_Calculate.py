@@ -1,7 +1,7 @@
 import zipfile
 import lizard
 
-srczip = zipfile.ZipFile('mergeZip.zip', mode='r')
+srczip = zipfile.ZipFile('server-develop.zip', mode='r')
 # onlyfiles = [f for f in listdir('srczip') if isfile(join('srczip', f))]
 onlyfiles = [];
 for file in srczip.filelist:

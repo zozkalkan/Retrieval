@@ -3,7 +3,7 @@ import pyodbc
 import zipfile
 import lizard
 
-zipName= 'tomcat70-trunk.zip'
+zipName= 'server-develop.zip'
 # global variable
 rtrnValArr=[]
 rtrnVal_=''
@@ -170,7 +170,7 @@ def variableHandler(body,cName,file_path):
                 objectTypes=body.type.name.value
             else:
                 objectTypes = body.type
-            Insert_Variable_Invocation(cName, 'tomcat.java', parentMethodName,
+            Insert_Variable_Invocation(cName, 'baz.java', parentMethodName,
                                        params.variable.name,
                                        objectTypes,
                                        sayac, file_path)
@@ -178,10 +178,21 @@ def variableHandler(body,cName,file_path):
         if hasattr(params.initializer,'type'):
             if hasattr(params.initializer.type,'name'):
                 if hasattr(params.initializer.type.name,'value'):
-                    Insert_Variable_Invocation(cName, 'tomcat.java', parentMethodName,
+                    Insert_Variable_Invocation(cName, 'baz.java', parentMethodName,
                                        params.variable.name,
                                            params.initializer.type.name.value,
                                        sayac, file_path)
+        if hasattr(params.initializer,'value'):
+            if (len(params.initializer.value.split('.'))>1):
+                Insert_Method_Invocation(cName, 'baz.java', parentMethodName,
+                                         params.initializer.value.split('.')[0],
+                                         params.initializer.value.split('.')[1], sayac, file_path)
+                Insert_Variable_Invocation(cName, 'baz.java', parentMethodName,
+                                           params.variable.name,
+                                           body.type.name.value,
+                                           sayac, file_path)
+
+
 def methodHandler  (body,cName,file_path):
        if hasattr(body, 'name'):
                         rtrnValArr = []
